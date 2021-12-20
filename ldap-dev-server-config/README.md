@@ -1,4 +1,5 @@
-
+# Pre-Requisites
+- Neo4j 4.x installed
 
 # Setting up an LDAP server for development/testing using Apache Directory Studio
 
