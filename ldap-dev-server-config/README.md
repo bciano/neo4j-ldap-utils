@@ -109,7 +109,7 @@ The server we setup earlier does not have any data yet. We will now load some da
 
 ![image](imgs/ldap-server-select-ldif.png)
 
-An empty file in the middle of your ApacheDS will appear. This is the LDIF editor. We will now enter some data into it to create users that Crafter Studio can authenticate through the LDAP Server we just setup. We will add three users, each belonging to a different group for the site myawesomesite in Crafter Studio. Please make sure that the attributes listed in the Crafter Studio LDAP configuration is configured in the LDAP server for each user. Copy and paste the data listed below into the LDIF editor. Make sure that there is an empty line after the last entry.
+An empty file in the middle of your ApacheDS will appear. This is the LDIF editor. We will now enter some data into it to create users that Neo4j can authenticate through the LDAP Server we just setup. We will add three users, each belonging to a different groups for Neo4j. Please make sure that the attributes listed in the Neo4j LDAP configuration is configured in the LDAP server for each user. Copy and paste the data listed below into the LDIF editor. Make sure that there is an empty line after the last entry.
 
 ```ldif
 dn: dc=example,dc=com
@@ -231,7 +231,7 @@ When successful, a dialog will appear that the password was verified successfull
 
 ![image](imgs/ldap-server-passwd-verified.png)
 
-Repeat the steps listed above for the rest of the users we added in to the LDAP server to change their password. After changing all the user’s passwords, we can now try to login to Crafter Studio using the credentials of the users we just added.
+Repeat the steps listed above for the rest of the users we added in to the LDAP server to change their password. After changing all the user’s passwords, we can now try to login to Neo4j using the credentials of the users we just added.
 
 ## Logging in to Neo4j as an LDAP user
 
