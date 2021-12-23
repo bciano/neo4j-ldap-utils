@@ -10,7 +10,7 @@ First, we will setup the LDAP server using Apache Directory Studio, then finally
 
 ## Configure LDAP authentication in Neo4j
 
-We will first configure LDAP authentication in Neo4j. In your Authoring installation, go to NEO4J_HOME/conf/neo4j.conf and modify the following lines. Stop and restart Crafter Studio after making your changes.
+We will first configure LDAP authentication in Neo4j. In your Neo4j installation, go to NEO4J_HOME/conf/neo4j.conf and modify the following lines. Stop and restart Neo4j after making your changes.
 
 ```properties
 #----------------------------------
