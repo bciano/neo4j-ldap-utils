@@ -55,11 +55,11 @@ dbms.security.ldap.authorization.user_search_base=ou=Users,dc=example,dc=com
 # The LDAP search filter to search for a user principal when LDAP authorization is
 # enabled. The filter should contain the placeholder token {0} which will be substituted for the
 # user principal.
-dbms.security.ldap.authorization.user_search_filter=(&(objectClass=*)(uid={0}))
+dbms.security.ldap.authorization.user_search_filter=(&(objectClass=*)(cn={0}))
 
 # A list of attribute names on a user object that contains groups to be used for mapping to roles
 # when LDAP authorization is enabled.
-#dbms.security.ldap.authorization.group_membership_attributes=memberOf
+dbms.security.ldap.authorization.group_membership_attributes=ou
 
 # An authorization mapping from LDAP group names to Neo4j role names.
 # The map should be formatted as a semicolon separated list of key-value pairs, where the
@@ -73,7 +73,11 @@ dbms.security.ldap.authorization.user_search_filter=(&(objectClass=*)(uid={0}))
 #          "cn=Neo4j Schema Manager,cn=users,dc=example,dc=com" = architect; \
 #          "cn=Neo4j Administrator,cn=users,dc=example,dc=com"  = admin
 dbms.security.ldap.authorization.group_to_role_mapping=\
-"cn=Users,dc=example,dc=com"      = reader
+"site_author"      = reader;    \
+"site_editor"      = reader;    \
+"cn=Users,dc=example,dc=com"      = reader;    \
+"ou=site_author,cn=Users,dc=example,dc=com"      = architect;    \
+"ou=site_editor,ou=Users,dc=example,dc=com"      = admin
 
 #END OF FILE
 ```
@@ -239,3 +243,56 @@ Repeat the steps listed above for the rest of the users we added in to the LDAP 
 In your browser, enter http://localhost:7474/browser. Fill in the the username and password using one of the users we setup in the LDAP server. In the image below, we will log in the user jbloggs. If authentication is successful, the user should be taken to the you will see a success message.
 
 ![image](imgs/neo4j-login-success.png)
+
+## LDAP Search command examples
+```
+% ldapsearch -H ldap://localhost:10389 -x -LLL -s base -b "" namingContexts
+dn:
+namingContexts: ou=system
+namingContexts: ou=schema
+namingContexts: ou=config
+namingContexts: dc=example,dc=com
+```
+
+```
+% ldapsearch -H ldap://localhost:10389 -x -LLL "uid=*" uid                 
+dn: cn=Joe Bloggs,ou=Users,dc=example,dc=com
+uid: jbloggs
+
+dn: cn=Jane Doe,ou=Users,dc=example,dc=com
+uid: jdoe
+```
+```
+% ldapsearch -H ldap://localhost:10389 -x -LLL "uid=*" uid userPassword
+dn: cn=Joe Bloggs,ou=Users,dc=example,dc=com
+userPassword:: e1NTSEF9ZHlmMFhMcUxHNnpHVjUrV3cxdE42cUUxeWdHdFpya04reVNNZ2c9PQ=
+ =
+uid: jbloggs
+
+dn: cn=Jane Doe,ou=Users,dc=example,dc=com
+userPassword:: e1NTSEF9V3BDeWRRMnNoYlQyWEdVcU54cjNBL3pPQTBlYkhPQ2l4c211UFE9PQ=
+ =
+uid: jdoe
+```
+
+
+```
+ldapsearch -H ldap://localhost:10389 -x -D "cn=jbloggs,ou=Users,dc=example,dc=com" -b "ou=Users,dc=example,dc=com" -w abc123
+```
+```
+% ldapsearch -H ldap://localhost:10389 -x -D "uid=admin,ou=system" -W -b "ou=Users,dc=example,dc=com" -s base -a always "(&(objectClass=*)(cn=jbloggs))"
+Enter LDAP Password: 
+# extended LDIF
+#
+# LDAPv3
+# base <ou=Users,dc=example,dc=com> with scope baseObject
+# filter: (&(objectClass=*)(cn=jbloggs))
+# requesting: ALL
+#
+
+# search result
+search: 2
+result: 0 Success
+
+# numResponses: 1
+```
